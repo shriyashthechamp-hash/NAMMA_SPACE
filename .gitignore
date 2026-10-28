@@ -1,0 +1,52 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.ruff_cache/
+
+# Environment and secrets
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# Build outputs
+/frontend/dist/
+/frontend/dist-ssr/
+*.tsbuildinfo
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# Reconstruction data & large binary assets
+/data/raw/
+/data/frames/
+/data/sparse/
+/data/dense/
+/data/splats/
+/data/exports/
+*.mp4
+*.mov
+*.avi
+*.ply
+*.splat
+*.colmap
+!/data/.gitkeep
+!/data/*/.gitkeep
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
