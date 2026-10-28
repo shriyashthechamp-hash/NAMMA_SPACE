@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { ProceduralTestRoom } from './components/ProceduralTestRoom';
+import { PointCloudViewer } from './components/PointCloudViewer';
 import { ViewerHeader } from './components/ViewerHeader';
 import { NavigationSidebar } from './components/NavigationSidebar';
 import { CaptureDrawer } from './components/CaptureDrawer';
@@ -56,6 +57,7 @@ export const App: React.FC = () => {
   const [selectedPoi, setSelectedPoi] = useState<PointOfInterest | null>(INITIAL_POIS[0]);
   const [activePath, setActivePath] = useState<[number, number, number][] | null>(null);
   const [cameraMode, setCameraMode] = useState<'orbit' | 'first-person'>('orbit');
+  const [sceneMode, setSceneMode] = useState<'benchmark' | 'pointcloud'>('benchmark');
   const [isCaptureOpen, setIsCaptureOpen] = useState(false);
 
   const [health, setHealth] = useState<BackendHealth | null>(null);
@@ -132,7 +134,9 @@ export const App: React.FC = () => {
         health={health}
         healthLoading={healthLoading}
         cameraMode={cameraMode}
+        sceneMode={sceneMode}
         onToggleCameraMode={() => setCameraMode(m => m === 'orbit' ? 'first-person' : 'orbit')}
+        onToggleSceneMode={() => setSceneMode(s => s === 'benchmark' ? 'pointcloud' : 'benchmark')}
         onResetView={handleResetView}
         onOpenCapture={() => setIsCaptureOpen(true)}
         onRefreshHealth={loadBackendStatus}
@@ -156,13 +160,20 @@ export const App: React.FC = () => {
           shadows
         >
           <color attach="background" args={['#070a12']} />
-          <ProceduralTestRoom
-            selectedPoi={selectedPoi}
-            pois={pois}
-            onSelectPoi={(poi) => setSelectedPoi(poi)}
-            activePath={activePath}
-            cameraMode={cameraMode}
-          />
+          {sceneMode === 'benchmark' ? (
+            <ProceduralTestRoom
+              selectedPoi={selectedPoi}
+              pois={pois}
+              onSelectPoi={(poi) => setSelectedPoi(poi)}
+              activePath={activePath}
+              cameraMode={cameraMode}
+            />
+          ) : (
+            <PointCloudViewer
+              url="http://127.0.0.1:8000/api/v1/data/sparse/sample/benchmark_room.ply"
+              pointSize={0.045}
+            />
+          )}
         </Canvas>
       </div>
 

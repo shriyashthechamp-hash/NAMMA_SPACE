@@ -6,7 +6,9 @@ interface ViewerHeaderProps {
   health: BackendHealth | null;
   healthLoading: boolean;
   cameraMode: 'orbit' | 'first-person';
+  sceneMode: 'benchmark' | 'pointcloud';
   onToggleCameraMode: () => void;
+  onToggleSceneMode: () => void;
   onResetView: () => void;
   onOpenCapture: () => void;
   onRefreshHealth: () => void;
@@ -16,7 +18,9 @@ export const ViewerHeader: React.FC<ViewerHeaderProps> = ({
   health,
   healthLoading,
   cameraMode,
+  sceneMode,
   onToggleCameraMode,
+  onToggleSceneMode,
   onResetView,
   onOpenCapture,
   onRefreshHealth,
@@ -165,6 +169,20 @@ export const ViewerHeader: React.FC<ViewerHeaderProps> = ({
         gap: 8,
         pointerEvents: 'auto',
       }}>
+        <button
+          className="btn"
+          onClick={onToggleSceneMode}
+          title="Toggle between Procedural Benchmark Geometry and Reconstructed Point Cloud (PLY)"
+          style={{
+            borderColor: sceneMode === 'pointcloud' ? '#06b6d4' : 'var(--border-subtle)',
+            background: sceneMode === 'pointcloud' ? 'rgba(6, 182, 212, 0.15)' : 'var(--bg-surface)',
+            color: sceneMode === 'pointcloud' ? '#38bdf8' : 'var(--text-primary)',
+          }}
+        >
+          <Layers size={15} />
+          <span>{sceneMode === 'benchmark' ? 'View: Benchmark Room' : 'View: Point Cloud (.PLY)'}</span>
+        </button>
+
         <button
           className={`btn ${cameraMode === 'first-person' ? 'btn-primary' : ''}`}
           onClick={onToggleCameraMode}
