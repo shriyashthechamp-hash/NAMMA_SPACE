@@ -1,0 +1,111 @@
+{
+  "project": "NAMMA_IIT_BOM",
+  "task": "IMG_5449 Real-World 3D Reconstruction Rescue & Visualization",
+  "generated_at": "2026-10-29T08:35:00+05:30",
+  "environment": {
+    "hardware": "Apple MacBook Pro M4 (16 GB Unified RAM)",
+    "os": "macOS (Apple Silicon)",
+    "colmap_version": "4.2.1",
+    "colmap_build": "Homebrew / Clang (CUDA unavailable, OpenMP/Threads CPU)",
+    "python_version": "3.10.12",
+    "node_version": "v20.x",
+    "vite_version": "5.4.21",
+    "threejs_version": "^0.182.0"
+  },
+  "source_video": {
+    "path": "data/raw/IMG_5449.MOV",
+    "duration_seconds": 45.58,
+    "file_size_bytes": 299946862,
+    "codec": "hevc (Main) / mp42",
+    "resolution": [1080, 1920],
+    "native_fps": 30.0
+  },
+  "baseline_metrics": {
+    "phase1_1fps": {
+      "name": "Phase 1: Initial Baseline (1.0 fps)",
+      "model_path": "data/sparse/IMG_5449/",
+      "extracted_frames": 46,
+      "registered_images": 16,
+      "registration_ratio": 0.3478,
+      "sparse_points": 1100,
+      "mean_reprojection_error_px": 0.72,
+      "mean_track_length": 4.12
+    },
+    "phase2_2fps_model1": {
+      "name": "Phase 2: Baseline (2.0 fps Model 1)",
+      "model_path": "data/sparse/IMG_5449_2fps/1/",
+      "extracted_frames": 91,
+      "registered_images": 47,
+      "registration_ratio": 0.5165,
+      "sparse_points": 5274,
+      "observations": 33009,
+      "mean_track_length": 6.2588,
+      "mean_observations_per_image": 702.32,
+      "mean_reprojection_error_px": 0.9755
+    },
+    "phase2_2fps_model2": {
+      "name": "Phase 2: Baseline (2.0 fps Model 2)",
+      "model_path": "data/sparse/IMG_5449_2fps/2/",
+      "extracted_frames": 91,
+      "registered_images": 11,
+      "sparse_points": 634,
+      "observations": 2549,
+      "mean_track_length": 4.0205,
+      "mean_reprojection_error_px": 0.891
+    }
+  },
+  "failed_experiment_diagnosis": {
+    "experiment_path": "data/sparse/IMG_5449_clean/models/",
+    "model_0_reported_failure": {
+      "registered_images": 4,
+      "sparse_points": 10,
+      "observations": 20,
+      "mean_reprojection_error_px": 0.000064,
+      "root_cause": "COLMAP mapper fragmented the scene into 4 disjoint sub-models due to lack of camera intrinsics sharing and abrupt camera motion. Model 0 was merely a discarded degenerate 4-frame sub-model, while Model 1 in the same directory held 64 registered images and 13,870 points."
+    },
+    "earlier_dimension_error": {
+      "error_code": "CAMERA_SINGLE_DIM_ERROR",
+      "root_cause": "Metadata files (image_list.txt, metadata.json, and contact_sheet.jpg with dimensions 3840x2160) were left inside the frames folder, which COLMAP attempted to decode as camera frames with mismatched resolutions."
+    },
+    "dense_stereo_limitation": {
+      "error": "std::invalid_argument: Dense stereo reconstruction requires CUDA",
+      "source_file": "colmap/src/colmap/mvs/mvs.cc:261",
+      "platform_impact": "COLMAP patch_match_stereo requires an NVIDIA GPU with CUDA. Natively on Apple Silicon CPU, multi-view stereo cannot execute. High-density SIFT multi-view triangulation (11,804 points) provides the densest verified point cloud."
+    }
+  },
+  "best_reconstruction": {
+    "experiment_id": "exp1_3fps_singlecam",
+    "model_name": "Phase 3: Curated 3.0 FPS Single-Camera SfM (Sub-model 1)",
+    "model_path": "data/reconstruction_experiments/IMG_5449/exp1_3fps_singlecam/models/1",
+    "ply_artifact_path": "data/reconstruction_experiments/IMG_5449/exp1_3fps_singlecam/sparse_points.ply",
+    "rich_trajectory_path": "data/reconstruction_experiments/IMG_5449/exp1_3fps_singlecam/rich_trajectory.json",
+    "extracted_frames": 137,
+    "registered_images": 71,
+    "unregistered_images": 66,
+    "registration_ratio": 0.5182,
+    "sparse_points": 11804,
+    "observations": 90403,
+    "mean_observations_per_image": 1273.28,
+    "mean_track_length": 7.6587,
+    "mean_reprojection_error_px": 0.9769,
+    "camera_model": "SIMPLE_RADIAL",
+    "camera_calibration": {
+      "focal_length_px": 1722.0,
+      "principal_point": [540.0, 960.0],
+      "radial_distortion_k": 0.045,
+      "shared_camera": true
+    },
+    "spatial_bounding_box": {
+      "min": [-25.45, -8.82, -2.81],
+      "max": [8.02, 15.71, 26.14],
+      "center": [-8.72, 3.44, 11.67]
+    },
+    "improvements_over_phase2": {
+      "registered_images_gain": "+51.1% (71 vs 47)",
+      "sparse_points_gain": "+123.8% (11,804 vs 5,274)",
+      "observations_gain": "+173.9% (90,403 vs 33,009)",
+      "track_length_gain": "+22.4% (7.66 vs 6.26 obs/pt)",
+      "reprojection_error": "0.9769 px vs 0.9755 px (Preserved sub-pixel precision)"
+    }
+  }
+}

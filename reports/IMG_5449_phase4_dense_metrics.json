@@ -1,0 +1,65 @@
+{
+  "mission": "NAMMA SPACE \u2014 PHASE 4: DENSE RECONSTRUCTION",
+  "timestamp": "2026-10-29T10:15:00Z",
+  "environment": {
+    "os": "macOS",
+    "chip": "Apple M4",
+    "colmap_version": "4.2.1",
+    "colmap_gpu_support": false,
+    "cuda_available": false,
+    "hardware_note": "Standard COLMAP PatchMatch stereo requires CUDA (aborts at mvs.cc:261). Delaunay meshing, texture mapping, and surface densification run natively on CPU."
+  },
+  "input_images": {
+    "total_extracted": 137,
+    "registered": 71,
+    "registration_rate_pct": 51.82,
+    "unregistered_excluded": 66,
+    "undistorted_images_verified": 71
+  },
+  "sparse_baseline": {
+    "points": 11804,
+    "mean_track_length": 7.66,
+    "mean_reprojection_error_px": 0.9769
+  },
+  "surface_mesh": {
+    "vertices": 7562,
+    "faces": 15298,
+    "method": "COLMAP Delaunay graph-cut surface reconstruction",
+    "has_colors": true,
+    "textured_mesh_available": true,
+    "texture_atlas_size_mb": 9.43
+  },
+  "dense_point_clouds": {
+    "raw_dense_points": 72756,
+    "filtered_dense_points": 59843,
+    "dense_to_sparse_count_ratio": 6.16,
+    "outliers_removed": 12913,
+    "outlier_removal_pct": 17.7,
+    "color_availability": "100% RGB color verified",
+    "bounding_box": {
+      "min": [
+        -25.45165252685547,
+        -15.706868171691895,
+        -26.142147064208984
+      ],
+      "max": [
+        8.019865989685059,
+        8.818665504455566,
+        2.8071329593658447
+      ]
+    }
+  },
+  "coordinate_conventions": {
+    "native_colmap": "Right-handed (+X right, +Y down, +Z forward) in camera space",
+    "viewer_display": "Three.js (+X right, +Y up, +Z out)",
+    "transformation_applied": "(x, y, z) -> (x, -y, -z)",
+    "preservation_status": "Native files (cameras.bin, images.bin, points3D.bin, dense_native_colmap.ply) preserved in native space. Display transforms applied only at viewer export boundary."
+  },
+  "reproducibility": {
+    "prepare_inputs_script": "reconstruction/prepare_dense_inputs.py",
+    "pipeline_runner_script": "reconstruction/run_dense.py",
+    "export_script": "reconstruction/export_dense.py",
+    "validation_script": "reconstruction/validate_dense.py",
+    "nvidia_cuda_handoff_script": "reconstruction/run_dense_nvidia.sh"
+  }
+}

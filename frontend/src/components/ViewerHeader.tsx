@@ -2,13 +2,23 @@ import React from 'react';
 import { BackendHealth } from '../types';
 import { Camera, Compass, RefreshCw, UploadCloud, Layers } from 'lucide-react';
 
+export type SceneMode = 
+  | 'phase4-dense'
+  | 'phase4-dense-filtered'
+  | 'phase4-mesh'
+  | 'real-3fps'
+  | 'real-2fps'
+  | 'real-1fps'
+  | 'benchmark'
+  | 'synthetic-ply';
+
 interface ViewerHeaderProps {
   health: BackendHealth | null;
   healthLoading: boolean;
   cameraMode: 'orbit' | 'first-person';
-  sceneMode: 'benchmark' | 'pointcloud';
+  sceneMode: SceneMode;
   onToggleCameraMode: () => void;
-  onToggleSceneMode: () => void;
+  onSelectSceneMode: (mode: SceneMode) => void;
   onResetView: () => void;
   onOpenCapture: () => void;
   onRefreshHealth: () => void;
@@ -20,7 +30,7 @@ export const ViewerHeader: React.FC<ViewerHeaderProps> = ({
   cameraMode,
   sceneMode,
   onToggleCameraMode,
-  onToggleSceneMode,
+  onSelectSceneMode,
   onResetView,
   onOpenCapture,
   onRefreshHealth,
@@ -169,19 +179,149 @@ export const ViewerHeader: React.FC<ViewerHeaderProps> = ({
         gap: 8,
         pointerEvents: 'auto',
       }}>
-        <button
-          className="btn"
-          onClick={onToggleSceneMode}
-          title="Toggle between Procedural Benchmark Geometry and Reconstructed Point Cloud (PLY)"
-          style={{
-            borderColor: sceneMode === 'pointcloud' ? '#06b6d4' : 'var(--border-subtle)',
-            background: sceneMode === 'pointcloud' ? 'rgba(6, 182, 212, 0.15)' : 'var(--bg-surface)',
-            color: sceneMode === 'pointcloud' ? '#38bdf8' : 'var(--text-primary)',
-          }}
-        >
-          <Layers size={15} />
-          <span>{sceneMode === 'benchmark' ? 'View: Benchmark Room' : 'View: Point Cloud (.PLY)'}</span>
-        </button>
+        {/* Scene Mode Selector */}
+        <div style={{
+          display: 'flex',
+          background: 'rgba(15, 23, 42, 0.6)',
+          borderRadius: 8,
+          padding: 3,
+          border: '1px solid rgba(255, 255, 255, 0.08)',
+          gap: 2,
+        }}>
+          <button
+            className="btn"
+            id="btn-mode-phase4-dense"
+            onClick={() => onSelectSceneMode('phase4-dense')}
+            title="Phase 4: Raw Fused Dense Point Cloud (72,756 points with RGB)"
+            style={{
+              padding: '5px 10px',
+              fontSize: '0.75rem',
+              borderColor: sceneMode === 'phase4-dense' ? '#ec4899' : 'transparent',
+              background: sceneMode === 'phase4-dense' ? 'rgba(236, 72, 153, 0.25)' : 'transparent',
+              color: sceneMode === 'phase4-dense' ? '#f472b6' : 'var(--text-secondary)',
+              fontWeight: sceneMode === 'phase4-dense' ? 700 : 500,
+            }}
+          >
+            <Layers size={14} />
+            <span>Dense (72.8k)</span>
+          </button>
+
+          <button
+            className="btn"
+            id="btn-mode-phase4-dense-filtered"
+            onClick={() => onSelectSceneMode('phase4-dense-filtered')}
+            title="Phase 4: Filtered Dense Point Cloud (59,843 points, outlier-cleaned)"
+            style={{
+              padding: '5px 10px',
+              fontSize: '0.75rem',
+              borderColor: sceneMode === 'phase4-dense-filtered' ? '#8b5cf6' : 'transparent',
+              background: sceneMode === 'phase4-dense-filtered' ? 'rgba(139, 92, 246, 0.25)' : 'transparent',
+              color: sceneMode === 'phase4-dense-filtered' ? '#a78bfa' : 'var(--text-secondary)',
+              fontWeight: sceneMode === 'phase4-dense-filtered' ? 700 : 500,
+            }}
+          >
+            <span>Dense Clean (59.8k)</span>
+          </button>
+
+          <button
+            className="btn"
+            id="btn-mode-phase4-mesh"
+            onClick={() => onSelectSceneMode('phase4-mesh')}
+            title="Phase 4: Delaunay Surface Mesh (7,562 vertices, 15,298 faces)"
+            style={{
+              padding: '5px 10px',
+              fontSize: '0.75rem',
+              borderColor: sceneMode === 'phase4-mesh' ? '#f59e0b' : 'transparent',
+              background: sceneMode === 'phase4-mesh' ? 'rgba(245, 158, 11, 0.25)' : 'transparent',
+              color: sceneMode === 'phase4-mesh' ? '#fbbf24' : 'var(--text-secondary)',
+              fontWeight: sceneMode === 'phase4-mesh' ? 700 : 500,
+            }}
+          >
+            <span>Mesh (15.3k)</span>
+          </button>
+
+          <button
+            className="btn"
+            id="btn-mode-real-3fps"
+            onClick={() => onSelectSceneMode('real-3fps')}
+            title="Phase 3: Best Curated Reconstruction at 3 fps (71 cameras, 11,804 points)"
+            style={{
+              padding: '5px 10px',
+              fontSize: '0.75rem',
+              borderColor: sceneMode === 'real-3fps' ? '#10b981' : 'transparent',
+              background: sceneMode === 'real-3fps' ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
+              color: sceneMode === 'real-3fps' ? '#34d399' : 'var(--text-secondary)',
+              fontWeight: sceneMode === 'real-3fps' ? 700 : 500,
+            }}
+          >
+            <Layers size={14} />
+            <span>Sparse (11.8k)</span>
+          </button>
+
+          <button
+            className="btn"
+            id="btn-mode-real-2fps"
+            onClick={() => onSelectSceneMode('real-2fps')}
+            title="Phase 2: Baseline Reconstruction at 2 fps (47 cameras, 5,274 points)"
+            style={{
+              padding: '5px 10px',
+              fontSize: '0.75rem',
+              borderColor: sceneMode === 'real-2fps' ? '#06b6d4' : 'transparent',
+              background: sceneMode === 'real-2fps' ? 'rgba(6, 182, 212, 0.2)' : 'transparent',
+              color: sceneMode === 'real-2fps' ? '#38bdf8' : 'var(--text-secondary)',
+            }}
+          >
+            <span>SfM (2 fps • 5.3k)</span>
+          </button>
+
+          <button
+            className="btn"
+            id="btn-mode-real-1fps"
+            onClick={() => onSelectSceneMode('real-1fps')}
+            title="Phase 1: Original Reconstruction at 1 fps (16 cameras, 1,100 points)"
+            style={{
+              padding: '5px 10px',
+              fontSize: '0.75rem',
+              borderColor: sceneMode === 'real-1fps' ? '#06b6d4' : 'transparent',
+              background: sceneMode === 'real-1fps' ? 'rgba(6, 182, 212, 0.2)' : 'transparent',
+              color: sceneMode === 'real-1fps' ? '#38bdf8' : 'var(--text-secondary)',
+            }}
+          >
+            <span>Real SfM (1 fps)</span>
+          </button>
+
+          <button
+            className="btn"
+            id="btn-mode-room"
+            onClick={() => onSelectSceneMode('benchmark')}
+            title="Procedural Interactive Benchmark Chamber"
+            style={{
+              padding: '5px 10px',
+              fontSize: '0.75rem',
+              borderColor: sceneMode === 'benchmark' ? '#06b6d4' : 'transparent',
+              background: sceneMode === 'benchmark' ? 'rgba(6, 182, 212, 0.2)' : 'transparent',
+              color: sceneMode === 'benchmark' ? '#38bdf8' : 'var(--text-secondary)',
+            }}
+          >
+            <span>Benchmark Room</span>
+          </button>
+
+          <button
+            className="btn"
+            id="btn-mode-synth-ply"
+            onClick={() => onSelectSceneMode('synthetic-ply')}
+            title="Synthetic 10k Benchmark Point Cloud PLY"
+            style={{
+              padding: '5px 10px',
+              fontSize: '0.75rem',
+              borderColor: sceneMode === 'synthetic-ply' ? '#06b6d4' : 'transparent',
+              background: sceneMode === 'synthetic-ply' ? 'rgba(6, 182, 212, 0.2)' : 'transparent',
+              color: sceneMode === 'synthetic-ply' ? '#38bdf8' : 'var(--text-secondary)',
+            }}
+          >
+            <span>Benchmark PLY</span>
+          </button>
+        </div>
 
         <button
           className={`btn ${cameraMode === 'first-person' ? 'btn-primary' : ''}`}
