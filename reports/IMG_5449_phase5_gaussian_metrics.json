@@ -1,0 +1,102 @@
+{
+  "mission": "NAMMA SPACE — PHASE 5: 3D GAUSSIAN SPLATTING",
+  "timestamp": "2026-10-29T11:20:00Z",
+  "environment": {
+    "os": "macOS (Apple Silicon arm64)",
+    "chip": "Apple M4 (16 GB Unified Memory)",
+    "framework": "PyTorch 2.5.0 with Metal Performance Shaders (MPS)",
+    "mps_available": true,
+    "cuda_available": false,
+    "hardware_acceleration": "Apple M4 MPS Accelerated Tensor Core Execution"
+  },
+  "dataset": {
+    "source_video": "data/raw/IMG_5449.MOV",
+    "video_duration_sec": 45.58,
+    "extraction_fps": 3.0,
+    "total_registered_views": 71,
+    "training_views": 63,
+    "validation_views": 8,
+    "split_ratio": "90/10",
+    "image_resolution": {
+      "original_width": 1064,
+      "original_height": 1893,
+      "training_scale": 0.25,
+      "training_width": 266,
+      "training_height": 473
+    },
+    "camera_model": {
+      "type": "PINHOLE",
+      "fl_x": 1686.95,
+      "fl_y": 1686.95,
+      "cx": 532.0,
+      "cy": 946.5
+    },
+    "nerf_transforms_manifest": "data/reconstruction_experiments/IMG_5449/phase5_gaussian/dataset/transforms.json"
+  },
+  "initialization": {
+    "seed_model": "Phase 3 3.0 FPS Curated SfM Reconstruction",
+    "initial_gaussians_count": 11804,
+    "spatial_extent": {
+      "min": [-25.45, -15.71, -26.14],
+      "max": [8.02, 8.82, 2.81]
+    },
+    "initial_scale_method": "k-nearest-neighbors (k=3) mean distance",
+    "initial_opacity": 0.70,
+    "color_representation": "0th-order Spherical Harmonics (f_dc_0, f_dc_1, f_dc_2)"
+  },
+  "training": {
+    "iterations_completed": 250,
+    "device_used": "mps",
+    "training_wall_clock_seconds": 17.36,
+    "throughput_it_per_sec": 14.4,
+    "optimizer": "Adam (per-parameter learning rates)",
+    "loss_function": "0.8 * L1 + 0.2 * (1 - SSIM)",
+    "final_metrics": {
+      "loss": 0.7352,
+      "l1_loss": 0.6704,
+      "peak_psnr_db": 4.41,
+      "ssim": 0.058
+    },
+    "checkpoint": "data/reconstruction_experiments/IMG_5449/phase5_gaussian/checkpoints/checkpoint_iter_0150.pt"
+  },
+  "exports": {
+    "inria_standard_ply": {
+      "path": "data/reconstruction_experiments/IMG_5449/phase5_gaussian/exports/gaussian_model_native.ply",
+      "size_mb": 0.77,
+      "coordinate_system": "COLMAP OpenCV (+X right, +Y down, +Z forward)",
+      "properties": [
+        "x", "y", "z", "nx", "ny", "nz",
+        "f_dc_0", "f_dc_1", "f_dc_2",
+        "opacity",
+        "scale_0", "scale_1", "scale_2",
+        "rot_0", "rot_1", "rot_2", "rot_3"
+      ]
+    },
+    "webgl_threejs_ply": {
+      "path": "data/reconstruction_experiments/IMG_5449/phase5_gaussian/exports/gaussian_model_threejs.ply",
+      "size_mb": 0.80,
+      "coordinate_system": "Three.js OpenGL (+X right, +Y up, +Z out)",
+      "display_transform": "(x, y, z) -> (x, -y, -z)",
+      "properties": [
+        "x", "y", "z", "nx", "ny", "nz",
+        "red", "green", "blue",
+        "f_dc_0", "f_dc_1", "f_dc_2",
+        "opacity",
+        "scale_0", "scale_1", "scale_2",
+        "rot_0", "rot_1", "rot_2", "rot_3"
+      ]
+    }
+  },
+  "web_integration": {
+    "scene_mode": "phase5-gaussian",
+    "label": "3D Splats (11.8k)",
+    "url": "http://127.0.0.1:8000/api/v1/data/reconstruction_experiments/IMG_5449/phase5_gaussian/exports/gaussian_model_threejs.ply",
+    "render_technique": "Radial Gaussian EWA splat texturing with soft alpha falloff",
+    "trajectory_aligned": true
+  },
+  "reproducibility": {
+    "dataset_preparation_script": "reconstruction/prepare_gaussian_dataset.py",
+    "local_mps_trainer_script": "reconstruction/train_gaussian.py",
+    "nvidia_cuda_runner_script": "reconstruction/train_gaussian_nvidia.sh"
+  }
+}

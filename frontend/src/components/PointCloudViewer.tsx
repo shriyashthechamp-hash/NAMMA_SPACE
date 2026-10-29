@@ -29,7 +29,7 @@ interface PointCloudViewerProps {
   url: string;
   pointSize?: number;
   colorMode?: 'elevation' | 'cyan' | 'original';
-  renderMode?: 'points' | 'mesh';
+  renderMode?: 'points' | 'mesh' | 'splats';
   isPreTransformed?: boolean;
   showWireframe?: boolean;
   showTrajectory?: boolean;
@@ -230,6 +230,7 @@ export const PointCloudViewer = forwardRef<
     return () => { active = false; };
   }, [url, colorMode, onPointCount]);
 
+  // Standard points material
   const material = useMemo(() => new THREE.PointsMaterial({
     size: pointSize,
     vertexColors: true,
@@ -237,6 +238,38 @@ export const PointCloudViewer = forwardRef<
     transparent: true,
     opacity: 0.95,
   }), [pointSize]);
+
+  // Gaussian radial splat texture for 3D Gaussian Splatting
+  const splatTexture = useMemo(() => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 64;
+    canvas.height = 64;
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      const gradient = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+      gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
+      gradient.addColorStop(0.35, 'rgba(255, 255, 255, 0.85)');
+      gradient.addColorStop(0.65, 'rgba(255, 255, 255, 0.35)');
+      gradient.addColorStop(0.9, 'rgba(255, 255, 255, 0.05)');
+      gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, 64, 64);
+    }
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.needsUpdate = true;
+    return tex;
+  }, []);
+
+  const splatMaterial = useMemo(() => new THREE.PointsMaterial({
+    size: pointSize * 2.2,
+    map: splatTexture,
+    vertexColors: true,
+    sizeAttenuation: true,
+    transparent: true,
+    opacity: 0.94,
+    depthWrite: false,
+    blending: THREE.NormalBlending,
+  }), [pointSize, splatTexture]);
 
   if (loading || !geometry) return null;
 
@@ -266,7 +299,7 @@ export const PointCloudViewer = forwardRef<
       {/* Smooth fly-to when a camera pose is selected */}
       <FlyController target={flyTarget} controlsRef={controlsRef} />
 
-      {/* Geometry: Render as Mesh or Point Cloud based on renderMode */}
+      {/* Geometry: Render as Mesh, 3D Gaussian Splats, or Point Cloud */}
       {renderMode === 'mesh' ? (
         <mesh geometry={geometry}>
           <meshStandardMaterial
@@ -278,6 +311,8 @@ export const PointCloudViewer = forwardRef<
             wireframe={showWireframe}
           />
         </mesh>
+      ) : renderMode === 'splats' ? (
+        <primitive object={new THREE.Points(geometry, splatMaterial)} />
       ) : (
         <primitive object={new THREE.Points(geometry, material)} />
       )}

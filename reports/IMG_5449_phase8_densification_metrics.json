@@ -1,0 +1,188 @@
+{
+  "evaluation_name": "Phase 8 Controlled Densification Head-to-Head",
+  "validation_views_count": 8,
+  "baseline_model": {
+    "checkpoint": "data/reconstruction_experiments/IMG_5449/phase5_gaussian/checkpoints/checkpoint_iter_0250.pt",
+    "num_gaussians": 11804,
+    "mean_full_psnr_db": 3.5803442717248766,
+    "mean_full_ssim": 0.04667575843632221,
+    "mean_full_l1": 0.577456396073103,
+    "mean_fg_psnr_db": 14.631861269812603,
+    "mean_fg_l1": 0.12554239854216576,
+    "mean_coverage_percent": 20.57595069054514,
+    "per_frame": [
+      {
+        "frame": "images/frame_0001.jpg",
+        "full_psnr": 3.6,
+        "full_ssim": 0.0467,
+        "fg_psnr": 14.37,
+        "fg_l1": 0.1224,
+        "coverage_pct": 27.1
+      },
+      {
+        "frame": "images/frame_0011.jpg",
+        "full_psnr": 3.45,
+        "full_ssim": 0.0447,
+        "fg_psnr": 17.69,
+        "fg_l1": 0.0897,
+        "coverage_pct": 24.2
+      },
+      {
+        "frame": "images/frame_0021.jpg",
+        "full_psnr": 4.12,
+        "full_ssim": 0.0775,
+        "fg_psnr": 14.53,
+        "fg_l1": 0.1255,
+        "coverage_pct": 31.5
+      },
+      {
+        "frame": "images/frame_0031.jpg",
+        "full_psnr": 4.48,
+        "full_ssim": 0.0809,
+        "fg_psnr": 13.77,
+        "fg_l1": 0.1379,
+        "coverage_pct": 29.2
+      },
+      {
+        "frame": "images/frame_0041.jpg",
+        "full_psnr": 3.65,
+        "full_ssim": 0.0404,
+        "fg_psnr": 13.69,
+        "fg_l1": 0.1303,
+        "coverage_pct": 18.1
+      },
+      {
+        "frame": "images/frame_0051.jpg",
+        "full_psnr": 2.81,
+        "full_ssim": 0.021,
+        "fg_psnr": 14.81,
+        "fg_l1": 0.1177,
+        "coverage_pct": 8.1
+      },
+      {
+        "frame": "images/frame_0084.jpg",
+        "full_psnr": 3.58,
+        "full_ssim": 0.0584,
+        "fg_psnr": 15.15,
+        "fg_l1": 0.1162,
+        "coverage_pct": 23.4
+      },
+      {
+        "frame": "images/frame_0094.jpg",
+        "full_psnr": 2.94,
+        "full_ssim": 0.0039,
+        "fg_psnr": 13.05,
+        "fg_l1": 0.1647,
+        "coverage_pct": 3.1
+      }
+    ]
+  },
+  "densified_model": {
+    "checkpoint": "data/reconstruction_experiments/IMG_5449/phase8_densification/checkpoints/checkpoint_iter_0250.pt",
+    "num_gaussians": 15735,
+    "mean_full_psnr_db": 3.7154183465271053,
+    "mean_full_ssim": 0.05356373271206394,
+    "mean_full_l1": 0.5609608590602875,
+    "mean_fg_psnr_db": 15.01631243187717,
+    "mean_fg_l1": 0.11851332243531942,
+    "mean_coverage_percent": 23.234255146235228,
+    "per_frame": [
+      {
+        "frame": "images/frame_0001.jpg",
+        "full_psnr": 3.75,
+        "full_ssim": 0.0609,
+        "fg_psnr": 15.37,
+        "fg_l1": 0.1032,
+        "coverage_pct": 30.0
+      },
+      {
+        "frame": "images/frame_0011.jpg",
+        "full_psnr": 3.6,
+        "full_ssim": 0.0554,
+        "fg_psnr": 18.04,
+        "fg_l1": 0.0875,
+        "coverage_pct": 27.7
+      },
+      {
+        "frame": "images/frame_0021.jpg",
+        "full_psnr": 4.41,
+        "full_ssim": 0.0884,
+        "fg_psnr": 15.37,
+        "fg_l1": 0.1083,
+        "coverage_pct": 36.0
+      },
+      {
+        "frame": "images/frame_0031.jpg",
+        "full_psnr": 4.69,
+        "full_ssim": 0.092,
+        "fg_psnr": 14.56,
+        "fg_l1": 0.1226,
+        "coverage_pct": 32.4
+      },
+      {
+        "frame": "images/frame_0041.jpg",
+        "full_psnr": 3.78,
+        "full_ssim": 0.0459,
+        "fg_psnr": 14.22,
+        "fg_l1": 0.1172,
+        "coverage_pct": 20.9
+      },
+      {
+        "frame": "images/frame_0051.jpg",
+        "full_psnr": 2.84,
+        "full_ssim": 0.0224,
+        "fg_psnr": 15.09,
+        "fg_l1": 0.1121,
+        "coverage_pct": 8.9
+      },
+      {
+        "frame": "images/frame_0084.jpg",
+        "full_psnr": 3.67,
+        "full_ssim": 0.059,
+        "fg_psnr": 14.71,
+        "fg_l1": 0.1245,
+        "coverage_pct": 25.7
+      },
+      {
+        "frame": "images/frame_0094.jpg",
+        "full_psnr": 2.98,
+        "full_ssim": 0.0045,
+        "fg_psnr": 12.78,
+        "fg_l1": 0.1727,
+        "coverage_pct": 4.2
+      }
+    ]
+  },
+  "comparison_delta": {
+    "gaussian_count": {
+      "baseline": 11804,
+      "densified": 15735,
+      "increase_ratio": 1.33
+    },
+    "mean_fg_psnr_db": {
+      "baseline": 14.631861269812603,
+      "densified": 15.01631243187717,
+      "delta": 0.38
+    },
+    "mean_fg_l1": {
+      "baseline": 0.12554239854216576,
+      "densified": 0.11851332243531942,
+      "delta": -0.007
+    },
+    "mean_coverage_percent": {
+      "baseline": 20.57595069054514,
+      "densified": 23.234255146235228,
+      "delta": 2.66
+    },
+    "mean_full_psnr_db": {
+      "baseline": 3.5803442717248766,
+      "densified": 3.7154183465271053,
+      "delta": 0.14
+    },
+    "mean_full_ssim": {
+      "baseline": 0.04667575843632221,
+      "densified": 0.05356373271206394,
+      "delta": 0.0069
+    }
+  }
+}

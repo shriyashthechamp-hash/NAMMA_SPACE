@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { ProceduralTestRoom } from './components/ProceduralTestRoom';
 import { PointCloudViewer } from './components/PointCloudViewer';
+import { GaussianSplatViewer } from './components/GaussianSplatViewer';
 import { ViewerHeader, SceneMode } from './components/ViewerHeader';
 import { NavigationSidebar } from './components/NavigationSidebar';
 import { CaptureDrawer } from './components/CaptureDrawer';
@@ -27,9 +28,11 @@ export const App: React.FC = () => {
   const [selectedPoi, setSelectedPoi] = useState<PointOfInterest | null>(INITIAL_POIS[0]);
   const [activePath, setActivePath] = useState<[number, number, number][] | null>(null);
   const [cameraMode, setCameraMode] = useState<'orbit' | 'first-person'>('orbit');
-  const [sceneMode, setSceneMode] = useState<SceneMode>('real-3fps');
+  const [sceneMode, setSceneMode] = useState<SceneMode>('phase8-gaussian');
   const [isCaptureOpen, setIsCaptureOpen] = useState(false);
   const [realPointsCount, setRealPointsCount] = useState<number | null>(null);
+  const [gaussianLoading, setGaussianLoading] = useState(false);
+  const [gaussianError, setGaussianError] = useState<string | null>(null);
 
   // Trajectory & Frame Inspection
   const [trajectoryData, setTrajectoryData] = useState<TrajectoryData | null>(null);
@@ -61,10 +64,24 @@ export const App: React.FC = () => {
 
   useEffect(() => { loadBackendStatus(); }, [loadBackendStatus]);
 
+  // Reset Gaussian loading state when switching modes
+  useEffect(() => {
+    setGaussianError(null);
+    setGaussianLoading(sceneMode === 'phase8-gaussian' || sceneMode === 'phase12-gaussian' || sceneMode === 'phase5-gaussian');
+  }, [sceneMode]);
+
   // ── Load rich trajectory whenever scene mode changes ───────────────────────
   useEffect(() => {
     let trajectoryUrl = '';
-    if (sceneMode === 'real-3fps') {
+    if (
+      sceneMode === 'phase8-gaussian' ||
+      sceneMode === 'phase12-gaussian' ||
+      sceneMode === 'phase5-gaussian' ||
+      sceneMode === 'phase4-dense' ||
+      sceneMode === 'phase4-dense-filtered' ||
+      sceneMode === 'phase4-mesh' ||
+      sceneMode === 'real-3fps'
+    ) {
       trajectoryUrl = 'http://127.0.0.1:8000/api/v1/data/reconstruction_experiments/IMG_5449/exp1_3fps_singlecam/rich_trajectory.json';
     } else if (sceneMode === 'real-2fps') {
       trajectoryUrl = 'http://127.0.0.1:8000/api/v1/data/sparse/IMG_5449_2fps/rich_trajectory.json';
@@ -200,6 +217,53 @@ export const App: React.FC = () => {
             />
           )}
 
+          {sceneMode === 'phase8-gaussian' && (
+            <GaussianSplatViewer
+              key={`phase8-gaussian-${walkthroughKey}`}
+              url="http://127.0.0.1:8000/api/v1/data/reconstruction_experiments/IMG_5449/phase8_densification/exports/gaussian_dense_native.ply"
+              fallbackUrl="http://127.0.0.1:8000/api/v1/data/reconstruction_experiments/IMG_5449/phase8_densification/exports/gaussian_dense_threejs.ply"
+              showTrajectory={showTrajectory}
+              showGrid={showGrid}
+              poses={trajectoryData?.trajectory || []}
+              selectedPose={selectedPose}
+              onSelectPose={p => { setSelectedPose(p); setIsFrameInspectorOpen(true); }}
+              onPointCount={n => { setRealPointsCount(n); setGaussianLoading(false); }}
+              firstCamera={firstCamera}
+              flyToPosition={flyToPosition}
+            />
+          )}
+
+          {sceneMode === 'phase12-gaussian' && (
+            <GaussianSplatViewer
+              key={`phase12-gaussian-${walkthroughKey}`}
+              url="http://127.0.0.1:8000/api/v1/data/reconstruction_experiments/IMG_5449/phase12_hybrid_seeded/exports/gaussian_hybrid_native.ply"
+              fallbackUrl="http://127.0.0.1:8000/api/v1/data/reconstruction_experiments/IMG_5449/phase12_hybrid_seeded/exports/gaussian_hybrid_threejs.ply"
+              showTrajectory={showTrajectory}
+              showGrid={showGrid}
+              poses={trajectoryData?.trajectory || []}
+              selectedPose={selectedPose}
+              onSelectPose={p => { setSelectedPose(p); setIsFrameInspectorOpen(true); }}
+              onPointCount={n => { setRealPointsCount(n); setGaussianLoading(false); }}
+              firstCamera={firstCamera}
+              flyToPosition={flyToPosition}
+            />
+          )}
+
+          {sceneMode === 'phase5-gaussian' && (
+            <GaussianSplatViewer
+              key={`phase5-gaussian-${walkthroughKey}`}
+              url="http://127.0.0.1:8000/api/v1/data/reconstruction_experiments/IMG_5449/phase5_gaussian/exports/gaussian_model_native.ply"
+              showTrajectory={showTrajectory}
+              showGrid={showGrid}
+              poses={trajectoryData?.trajectory || []}
+              selectedPose={selectedPose}
+              onSelectPose={p => { setSelectedPose(p); setIsFrameInspectorOpen(true); }}
+              onPointCount={setRealPointsCount}
+              firstCamera={firstCamera}
+              flyToPosition={flyToPosition}
+            />
+          )}
+
           {sceneMode === 'phase4-dense' && (
             <PointCloudViewer
               key={`phase4-dense-${walkthroughKey}`}
@@ -313,6 +377,39 @@ export const App: React.FC = () => {
         </Canvas>
       </div>
 
+      {/* ── Gaussian Splat loading / error overlay ── */}
+      {(sceneMode === 'phase8-gaussian' || sceneMode === 'phase5-gaussian') && gaussianLoading && !gaussianError && (
+        <div style={{
+          position: 'absolute', top: '50%', left: '50%',
+          transform: 'translate(-50%, -50%)',
+          zIndex: 30, pointerEvents: 'none',
+          background: 'rgba(7,10,18,0.82)',
+          border: '1px solid #1e293b',
+          borderRadius: 12, padding: '18px 28px',
+          color: '#94a3b8', fontSize: '0.82rem',
+          display: 'flex', alignItems: 'center', gap: 10,
+        }}>
+          <span style={{ display: 'inline-block', width: 14, height: 14, borderRadius: '50%',
+            border: '2px solid #06b6d4', borderTopColor: 'transparent',
+            animation: 'spin 0.8s linear infinite' }} />
+          Loading Gaussian Splat model…
+        </div>
+      )}
+      {(sceneMode === 'phase8-gaussian' || sceneMode === 'phase5-gaussian') && gaussianError && (
+        <div style={{
+          position: 'absolute', top: '50%', left: '50%',
+          transform: 'translate(-50%, -50%)',
+          zIndex: 30, pointerEvents: 'none',
+          background: 'rgba(30,10,10,0.88)',
+          border: '1px solid #7f1d1d',
+          borderRadius: 12, padding: '18px 28px',
+          color: '#fca5a5', fontSize: '0.8rem', maxWidth: 400,
+        }}>
+          <strong>Gaussian Splat error:</strong> {gaussianError}
+          <br /><span style={{ color: '#94a3b8' }}>Radial splat fallback is active.</span>
+        </div>
+      )}
+
       {/* ── Reconstruction Metrics HUD (bottom-left) ── */}
       <ReconstructionMetricsHUD
         sceneMode={sceneMode}
@@ -330,7 +427,7 @@ export const App: React.FC = () => {
       />
 
       {/* ── Source Frame Inspector (bottom-right) ── */}
-      {(sceneMode === 'real-3fps' || sceneMode === 'real-2fps') && isFrameInspectorOpen && trajectoryData && (
+      {(sceneMode === 'real-3fps' || sceneMode === 'real-2fps' || sceneMode === 'phase8-gaussian' || sceneMode === 'phase5-gaussian') && isFrameInspectorOpen && trajectoryData && (
         <SourceFrameInspector
           trajectory={trajectoryData.trajectory}
           unregistered={trajectoryData.unregistered}
@@ -342,7 +439,7 @@ export const App: React.FC = () => {
       )}
 
       {/* Re-open frame inspector */}
-      {(sceneMode === 'real-3fps' || sceneMode === 'real-2fps') && !isFrameInspectorOpen && (
+      {(sceneMode === 'real-3fps' || sceneMode === 'real-2fps' || sceneMode === 'phase8-gaussian' || sceneMode === 'phase5-gaussian') && !isFrameInspectorOpen && (
         <button
           className="btn glass-panel"
           onClick={() => setIsFrameInspectorOpen(true)}

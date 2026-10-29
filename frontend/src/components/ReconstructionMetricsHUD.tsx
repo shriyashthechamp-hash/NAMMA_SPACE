@@ -34,6 +34,9 @@ export const ReconstructionMetricsHUD: React.FC<ReconstructionMetricsHUDProps> =
 }) => {
   if (sceneMode === 'benchmark') return null;
 
+  const isPhase8 = sceneMode === 'phase8-gaussian';
+  const isPhase5 = sceneMode === 'phase5-gaussian';
+  const isGaussian = isPhase8 || isPhase5;
   const isDense = sceneMode === 'phase4-dense';
   const isDenseFilt = sceneMode === 'phase4-dense-filtered';
   const isMesh = sceneMode === 'phase4-mesh';
@@ -41,7 +44,11 @@ export const ReconstructionMetricsHUD: React.FC<ReconstructionMetricsHUDProps> =
   const is2fps = sceneMode === 'real-2fps';
   const is1fps = sceneMode === 'real-1fps';
 
-  const title = isDense
+  const title = isPhase8
+    ? 'Phase 8: Adaptive Densified Splats'
+    : isPhase5
+    ? 'Phase 5: 3D Gaussian Splatting'
+    : isDense
     ? 'Phase 4: Raw Fused Dense Cloud'
     : isDenseFilt
     ? 'Phase 4: Filtered Dense Cloud'
@@ -55,7 +62,11 @@ export const ReconstructionMetricsHUD: React.FC<ReconstructionMetricsHUDProps> =
     ? 'Phase 1: Initial Baseline (1.0 fps)'
     : 'Synthetic Benchmark PLY';
 
-  const badgeColor = isDense
+  const badgeColor = isPhase8
+    ? '#10b981'
+    : isPhase5
+    ? '#06b6d4'
+    : isDense
     ? '#ec4899'
     : isDenseFilt
     ? '#8b5cf6'
@@ -67,7 +78,7 @@ export const ReconstructionMetricsHUD: React.FC<ReconstructionMetricsHUDProps> =
     ? '#38bdf8'
     : '#64748b';
 
-  const camerasText = (isDense || isDenseFilt || isMesh || is3fps)
+  const camerasText = (isGaussian || isDense || isDenseFilt || isMesh || is3fps)
     ? `${trajectory.length || 71} / ${totalFramesCount || 137} (51.8%)`
     : is2fps
     ? `${trajectory.length || 47} / ${totalFramesCount || 91} (51.6%)`
@@ -75,7 +86,11 @@ export const ReconstructionMetricsHUD: React.FC<ReconstructionMetricsHUDProps> =
     ? '16 / 46 (34.8%)'
     : 'N/A';
 
-  const pointsText = isMesh
+  const pointsText = isPhase8
+    ? `${realPointsCount ?? 15735} Densified Gaussians (+33%)`
+    : isPhase5
+    ? `${realPointsCount ?? 11804} 3D Gaussians (Cov + SH)`
+    : isMesh
     ? `${realPointsCount ?? 7562} vertices • 15.3k faces`
     : isDense
     ? `${realPointsCount ?? 72756} pts (6.2x dense)`
@@ -83,13 +98,21 @@ export const ReconstructionMetricsHUD: React.FC<ReconstructionMetricsHUDProps> =
     ? `${realPointsCount ?? 59843} pts (cleaned)`
     : (realPointsCount ?? (is3fps ? 11804 : is2fps ? 5274 : 1100));
 
-  const reprojText = isMesh
+  const reprojText = isPhase8
+    ? 'PSNR: 15.02 dB (FG)'
+    : isPhase5
+    ? 'PSNR: 14.63 dB (FG)'
+    : isMesh
     ? 'Graph-Cut Min-Cut'
     : (isDense || isDenseFilt)
     ? '100% RGB Colors'
     : (is3fps ? '0.98 px' : is2fps ? '0.98 px' : '0.72 px');
 
-  const trackText = isMesh
+  const trackText = isPhase8
+    ? '63 Train • 8 Val Views'
+    : isPhase5
+    ? '63 Training Views'
+    : isMesh
     ? '15,298 Triangles'
     : isDense
     ? '72,756 Surface Pts'
@@ -135,8 +158,12 @@ export const ReconstructionMetricsHUD: React.FC<ReconstructionMetricsHUDProps> =
             border: `1px solid ${badgeColor}44`,
           }}
         >
-          {is3fps ? 'BEST MODEL' : 'BASELINE'}
+          {isPhase8 ? 'PHASE 8 DENSE 3DGS' : isPhase5 ? 'PHASE 5 3DGS' : isDense || isDenseFilt || isMesh ? 'DENSE PHASE 4' : is3fps ? 'BEST SFM' : 'BASELINE'}
         </span>
+      </div>
+
+      <div style={{ fontSize: '0.68rem', color: '#94a3b8', marginTop: -4 }}>
+        Physical Source: <code>data/raw/IMG_5449.MOV</code> (Apple Silicon M4 MPS)
       </div>
 
       {/* Primary SfM Metrics Grid */}

@@ -1,8 +1,11 @@
 import React from 'react';
 import { BackendHealth } from '../types';
-import { Camera, Compass, RefreshCw, UploadCloud, Layers } from 'lucide-react';
+import { Camera, Compass, RefreshCw, UploadCloud, Layers, Sparkles } from 'lucide-react';
 
 export type SceneMode = 
+  | 'phase8-gaussian'
+  | 'phase12-gaussian'
+  | 'phase5-gaussian'
   | 'phase4-dense'
   | 'phase4-dense-filtered'
   | 'phase4-mesh'
@@ -84,7 +87,9 @@ export const ViewerHeader: React.FC<ViewerHeaderProps> = ({
             </span>
           </div>
           <p style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>
-            Smartphone 3D Reconstruction & Spatial Navigation
+            {sceneMode === 'benchmark' || sceneMode === 'synthetic-ply'
+              ? 'Procedural CAD Benchmark Room • POI Inspection & Pathfinding'
+              : 'Real Physical Walkthrough: data/raw/IMG_5449.MOV (45.6s iPhone • 71 COLMAP Cameras)'}
           </p>
         </div>
       </div>
@@ -188,6 +193,60 @@ export const ViewerHeader: React.FC<ViewerHeaderProps> = ({
           border: '1px solid rgba(255, 255, 255, 0.08)',
           gap: 2,
         }}>
+          <button
+            className="btn"
+            id="btn-mode-phase8-gaussian"
+            onClick={() => onSelectSceneMode('phase8-gaussian')}
+            title="Phase 8: Adaptive Densified 3D Gaussian Splats (15,735 Gaussians, +33% coverage, +0.38 dB PSNR)"
+            style={{
+              padding: '5px 10px',
+              fontSize: '0.75rem',
+              borderColor: sceneMode === 'phase8-gaussian' ? '#10b981' : 'transparent',
+              background: sceneMode === 'phase8-gaussian' ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(6, 182, 212, 0.3))' : 'transparent',
+              color: sceneMode === 'phase8-gaussian' ? '#34d399' : 'var(--text-secondary)',
+              fontWeight: sceneMode === 'phase8-gaussian' ? 700 : 500,
+            }}
+          >
+            <Sparkles size={14} color={sceneMode === 'phase8-gaussian' ? '#34d399' : 'currentColor'} />
+            <span>Dense Splats (15.7k)</span>
+          </button>
+
+          <button
+            className="btn"
+            id="btn-mode-phase12-gaussian"
+            onClick={() => onSelectSceneMode('phase12-gaussian')}
+            title="Phase 12 hybrid model: improved floor and room detail; lower overall coverage than Phase 8"
+            style={{
+              padding: '5px 10px',
+              fontSize: '0.75rem',
+              borderColor: sceneMode === 'phase12-gaussian' ? '#a78bfa' : 'transparent',
+              background: sceneMode === 'phase12-gaussian' ? 'rgba(167, 139, 250, 0.25)' : 'transparent',
+              color: sceneMode === 'phase12-gaussian' ? '#c4b5fd' : 'var(--text-secondary)',
+              fontWeight: sceneMode === 'phase12-gaussian' ? 700 : 500,
+            }}
+          >
+            <Sparkles size={14} color={sceneMode === 'phase12-gaussian' ? '#c4b5fd' : 'currentColor'} />
+            <span>Enhanced Room (30.4k)</span>
+          </button>
+
+          <button
+            className="btn"
+            id="btn-mode-phase5-gaussian"
+            onClick={() => onSelectSceneMode('phase5-gaussian')}
+            title="Phase 5: 3D Gaussian Splats (Trained on Apple M4 MPS, 11,804 splats with EWA projection)"
+            style={{
+              padding: '5px 10px',
+              fontSize: '0.75rem',
+              borderColor: sceneMode === 'phase5-gaussian' ? '#06b6d4' : 'transparent',
+              background: sceneMode === 'phase5-gaussian' ? 'linear-gradient(135deg, rgba(6, 182, 212, 0.3), rgba(244, 63, 94, 0.3))' : 'transparent',
+              color: sceneMode === 'phase5-gaussian' ? '#38bdf8' : 'var(--text-secondary)',
+              fontWeight: sceneMode === 'phase5-gaussian' ? 700 : 500,
+            }}
+          >
+            <Sparkles size={14} color={sceneMode === 'phase5-gaussian' ? '#38bdf8' : 'currentColor'} />
+            <span>3D Splats (11.8k)</span>
+          </button>
+
           <button
             className="btn"
             id="btn-mode-phase4-dense"

@@ -43,3 +43,43 @@ Thumbs.db
 .vscode/
 *.swp
 *.swo
+
+# QA Exports & Temporary Evaluation Dumps
+data/exports/
+
+# Local reconstruction artifacts: keep required demo exports, ignore bulky intermediates
+data/raw/
+data/frames/
+data/sparse/
+data/dense/
+data/reconstruction_experiments/**/database.db*
+data/reconstruction_experiments/**/checkpoints/
+data/reconstruction_experiments/**/dataset/
+data/reconstruction_experiments/**/evaluation/
+data/reconstruction_experiments/**/renders/
+data/reconstruction_experiments/**/initial_*.ply
+data/reconstruction_experiments/**/*.npy
+data/reconstruction_experiments/**/*.pt
+
+# Keep assets referenced by the frontend
+!data/reconstruction_experiments/
+!data/reconstruction_experiments/IMG_5449/
+!data/reconstruction_experiments/IMG_5449/phase8_densification/
+!data/reconstruction_experiments/IMG_5449/phase8_densification/exports/
+!data/reconstruction_experiments/IMG_5449/phase12_hybrid_seeded/
+!data/reconstruction_experiments/IMG_5449/phase12_hybrid_seeded/exports/
+!data/reconstruction_experiments/IMG_5449/phase5_gaussian/
+!data/reconstruction_experiments/IMG_5449/phase5_gaussian/exports/
+!data/reconstruction_experiments/IMG_5449/phase4_dense/
+!data/reconstruction_experiments/IMG_5449/phase4_dense/exports/
+!data/reconstruction_experiments/IMG_5449/exp1_3fps_singlecam/
+!data/reconstruction_experiments/IMG_5449/phase8_densification/exports/*.ply
+!data/reconstruction_experiments/IMG_5449/phase12_hybrid_seeded/exports/*.ply
+!data/reconstruction_experiments/IMG_5449/phase5_gaussian/exports/*.ply
+!data/reconstruction_experiments/IMG_5449/phase4_dense/exports/*.ply
+!data/reconstruction_experiments/IMG_5449/exp1_3fps_singlecam/sparse_points.ply
+!data/reconstruction_experiments/IMG_5449/exp1_3fps_singlecam/rich_trajectory.json
+
+# Local recovery copies
+*.pre-fix
+*.pre-phase12
