@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: namma-space-api
+    runtime: python
+    # Keep Root Directory empty (repo root). Do NOT set it to "backend":
+    # the FastAPI app imports `backend.app.*` and uvicorn must run from repo root.
+    rootDir: .
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      # Update this after the frontend is deployed — add the actual frontend URL
+      - key: CORS_ORIGINS
+        value: "*"
+      - key: DATA_DIR
+        value: ./data
+      # Render provides $PORT automatically; these are not needed but documented here
+      # - key: BACKEND_HOST
+      #   value: 0.0.0.0
